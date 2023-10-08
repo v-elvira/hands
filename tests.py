@@ -9,12 +9,6 @@ async def test_text():
 
 
 @pytest.mark.asyncio
-async def test_text():
-    data = {"REP": "https://repetitors.info/"}
-    assert await find_phones(data) == {"REP": {"84955405676"}}
-
-
-@pytest.mark.asyncio
 async def test_show_phone():
     data = {"HANDS": "https://hands.ru/company/about/"}
     assert await find_phones(data) == {"HANDS": {"84951370720"}}
