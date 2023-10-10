@@ -78,7 +78,7 @@ async def fast_search(emails):
     async with aiohttp.ClientSession() as session:
         tasks = []
         for key, val in emails.items():
-            if type(val) in (list, set, tuple):
+            if isinstance(val, (list, set, tuple)):
                 [
                     tasks.append(
                         asyncio.create_task(
@@ -97,19 +97,21 @@ async def fast_search(emails):
     return found, not_found
 
 
-def slow_search(emails, found=defaultdict(set)):
+def slow_search(emails, found=None):
+    if found is None:
+        found = defaultdict(set)
     not_found = defaultdict(set)
     browser = get_browser()
     with browser:
         for key, val in emails.items():
-            if type(val) in (list, set, tuple):
+            if isinstance(val, (list, set, tuple)):
                 [
                     browser_page_search(browser, key, url, found, not_found)
                     for url in val
                 ]
             else:
                 browser_page_search(browser, key, val, found, not_found)
-    return not_found
+    return found, not_found
 
 
 async def find_phones(emails):
@@ -122,7 +124,7 @@ async def find_phones(emails):
     if not_found:
         print("_" * 100)
         print("Slow search:")
-        not_found = slow_search(not_found, found)
+        _, not_found = slow_search(not_found, found)
     print("_" * 100)
     print(f"Found phones for {len(found)} organisations")
     print(f"Nothing found for: {len(not_found)}")
